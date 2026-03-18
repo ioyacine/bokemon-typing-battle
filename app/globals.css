@@ -1,42 +1,1459 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base palette */
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-card: #16213e;
+  --bg-card-hover: #1a2744;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-hover: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(100, 140, 255, 0.3);
+
+  /* Text */
+  --text-primary: #e8e8f0;
+  --text-secondary: #a0a0b8;
+  --text-dim: #686880;
+  --text-bright: #ffffff;
+
+  /* Accents */
+  --accent-blue: #4a90e2;
+  --accent-purple: #7c5cbf;
+  --accent-pink: #e84393;
+  --accent-gold: #f39c12;
+  --accent-green: #2ecc71;
+  --accent-red: #e74c3c;
+  --accent-cyan: #00cec9;
+
+  /* Pokémon type colors */
+  --type-normal: #A8A878;
+  --type-fire: #F08030;
+  --type-water: #6890F0;
+  --type-electric: #F8D030;
+  --type-grass: #78C850;
+  --type-ice: #98D8D8;
+  --type-fighting: #C03028;
+  --type-poison: #A040A0;
+  --type-ground: #E0C068;
+  --type-flying: #A890F0;
+  --type-psychic: #F85888;
+  --type-bug: #A8B820;
+  --type-rock: #B8A038;
+  --type-ghost: #705898;
+  --type-dragon: #7038F8;
+  --type-dark: #705848;
+  --type-steel: #B8B8D0;
+  --type-fairy: #EE99AC;
+
+  /* HP bar colors */
+  --hp-high: #2ecc71;
+  --hp-medium: #f39c12;
+  --hp-low: #e74c3c;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(74, 144, 226, 0.3);
+
+  /* Sizing */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 50px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-html,
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
 body {
-  max-width: 100vw;
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
   overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+img {
+  max-width: 100%;
+  height: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-60px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes idleBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.02); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 50%, 90% { transform: translateX(-6px); }
+  30%, 70% { transform: translateX(6px); }
+}
+
+@keyframes hitFlash {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(2.5) saturate(0); }
+}
+
+@keyframes faintAnim {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(40px) scale(0.5); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(74, 144, 226, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(74, 144, 226, 0.6); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floatPokeball {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.15; }
+  25% { transform: translateY(-20px) rotate(90deg); opacity: 0.25; }
+  50% { transform: translateY(-10px) rotate(180deg); opacity: 0.15; }
+  75% { transform: translateY(-30px) rotate(270deg); opacity: 0.2; }
+}
+
+@keyframes starPop {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  50% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes numberPop {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-40px) scale(1.5); opacity: 0; }
+}
+
+@keyframes bgShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes attackSlash {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(30px); }
+  60% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes enemyAttackSlash {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(-30px); }
+  60% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+/* ==========================================
+   TITLE SCREEN
+   ========================================== */
+
+.titleScreen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 30%, #1a1a3e 0%, #0f0f1a 70%);
+}
+
+.titleBg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.pokeball {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #fff 30%, #e74c3c 31%, #e74c3c 50%, #333 51%, #333 53%, #fff 54%);
+  animation: floatPokeball 8s ease-in-out infinite;
+  opacity: 0.15;
+}
+
+.titleContent {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  animation: fadeInUp 1s ease-out;
+}
+
+.titleLogo {
+  font-size: 4rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-pink), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  margin-bottom: 0.5rem;
+  letter-spacing: -2px;
+  line-height: 1.1;
+}
+
+.titleSubtitle {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  margin-bottom: 3rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.startBtn {
+  padding: 16px 48px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-glow);
+  transition: all 0.3s ease;
+  animation: pulse 2s ease-in-out infinite;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.startBtn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 40px rgba(74, 144, 226, 0.5);
+}
+
+.startBtn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.soundToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  z-index: 100;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+.soundToggle:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+/* ==========================================
+   TEAM SELECT SCREEN
+   ========================================== */
+
+.teamSelectScreen {
+  min-height: 100vh;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(ellipse at 50% 20%, #1a1a3e 0%, #0f0f1a 70%);
+}
+
+.teamSelectTitle {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  animation: fadeInDown 0.6s ease-out;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.teamSelectSubtitle {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  animation: fadeInDown 0.6s ease-out 0.1s both;
+}
+
+.selectedCount {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.pokemonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  max-width: 1100px;
+  width: 100%;
+  margin-bottom: 2rem;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.pokemonCard {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pokemonCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.pokemonCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-glow);
+  background: var(--bg-card-hover);
+}
+
+.pokemonCard.selected {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 20px rgba(243, 156, 18, 0.3), inset 0 0 20px rgba(243, 156, 18, 0.05);
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.08), rgba(74, 144, 226, 0.05));
+}
+
+.pokemonCard.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.pokemonCard.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  filter: grayscale(0.5);
+}
+
+.cardSprite {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+.pokemonCard:hover .cardSprite {
+  transform: scale(1.1);
+}
+
+.cardName {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+
+.cardTypes {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.typeBadge {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.cardStats {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+}
+
+.beginBattleBtn {
+  padding: 14px 40px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-green), #27ae60);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.beginBattleBtn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 30px rgba(46, 204, 113, 0.5);
+}
+
+.beginBattleBtn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  filter: grayscale(0.5);
+}
+
+/* ==========================================
+   BATTLE SCREEN
+   ========================================== */
+
+.battleScreen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: linear-gradient(180deg, #1a1a3e 0%, #0d2137 40%, #1a3a2a 100%);
+}
+
+.battleTopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
+
+.timerDisplay {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreDisplay {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.battleControls {
+  display: flex;
+  gap: 8px;
+}
+
+.controlBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+}
+
+.controlBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+/* Battle field */
+.battleField {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.battleFieldGround {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, transparent 0%, rgba(34, 80, 50, 0.3) 50%, rgba(34, 80, 50, 0.5) 100%);
+  border-top: 2px solid rgba(46, 204, 113, 0.15);
+}
+
+/* Pokémon areas */
+.enemyArea {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0 2rem;
+  flex: 1;
+  animation: slideInRight 0.8s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.playerArea {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 0 2rem;
+  flex: 1;
+  animation: slideInLeft 0.8s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.pokemonBattleUnit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pokemonBattleUnit.enemy {
+  flex-direction: column-reverse;
+}
+
+.battleSprite {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+  animation: idleBounce 3s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.battleSprite.attacking {
+  animation: attackSlash 0.4s ease-out;
+}
+
+.battleSprite.enemyAttacking {
+  animation: enemyAttackSlash 0.4s ease-out;
+}
+
+.battleSprite.hit {
+  animation: shake 0.4s ease-out, hitFlash 0.4s ease-out;
+}
+
+.battleSprite.fainted {
+  animation: faintAnim 0.8s ease-out forwards;
+}
+
+/* Info box (name + HP) */
+.pokemonInfoBox {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  min-width: 220px;
+  box-shadow: var(--shadow-md);
+}
+
+.pokemonInfoBox.enemy {
+  background: rgba(22, 33, 62, 0.9);
+}
+
+.infoBoxHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.pokemonNameBattle {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.pokemonLevelBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.06);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* HP Bar */
+.hpBarContainer {
+  margin-bottom: 4px;
+}
+
+.hpBarLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-bottom: 3px;
+}
+
+.hpBarTrack {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hpBarFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease, background-color 0.3s ease;
+  position: relative;
+}
+
+.hpBarFill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 60%);
+  border-radius: 4px;
+}
+
+.hpBarFill.high { background-color: var(--hp-high); }
+.hpBarFill.medium { background-color: var(--hp-medium); }
+.hpBarFill.low { background-color: var(--hp-low); }
+
+/* Team indicators */
+.teamIndicators {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.teamBall {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.teamBall.active {
+  background: var(--accent-green);
+  box-shadow: 0 0 6px rgba(46, 204, 113, 0.5);
+}
+
+.teamBall.fainted {
+  background: var(--accent-red);
+  opacity: 0.6;
+}
+
+.teamBall.ready {
+  background: var(--text-dim);
+}
+
+/* Battle message box */
+.battleMessageBox {
+  background: rgba(22, 33, 62, 0.95);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  margin: 0 1rem;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.3s ease-out;
+  z-index: 2;
+}
+
+.battleMessageBox .effectivenessText {
+  color: var(--accent-gold);
+  font-weight: 700;
+}
+
+/* Move panel */
+.movePanel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+}
+
+.moveBtn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.moveBtn:hover:not(:disabled) {
+  transform: translateY(-5px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.moveBtn:active:not(:disabled) {
+  transform: translateY(2px) scale(0.98);
+}
+
+.moveBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+.moveBtn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 50%);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+}
+
+.moveName {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moveMeta {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Switch panel */
+.switchPanel {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.switchBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.switchBtn:hover:not(:disabled) {
+  border-color: var(--border-glow);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+}
+
+.switchBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.switchSprite {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.switchBtnInfo {
+  text-align: left;
+}
+
+.switchBtnName {
+  font-size: 0.85rem;
+}
+
+.switchBtnHp {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.actionToggle {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid var(--border);
+}
+
+.actionToggleBtn {
+  flex: 1;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.actionToggleBtn.active {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.actionToggleBtn:hover {
+  color: var(--text-primary);
+}
+
+/* Damage number */
+.damageNumber {
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: 900;
+  animation: numberPop 1s ease-out forwards;
+  z-index: 20;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.damageNumber.superEffective { color: var(--accent-gold); font-size: 1.8rem; }
+.damageNumber.notEffective { color: var(--text-dim); font-size: 1.2rem; }
+.damageNumber.critical { color: var(--accent-pink); }
+.damageNumber.normal { color: #fff; }
+.damageNumber.missed { color: var(--text-dim); font-style: italic; }
+
+/* ==========================================
+   PAUSE OVERLAY
+   ========================================== */
+
+.pauseOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.pauseTitle {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--text-bright);
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+}
+
+.pauseButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 260px;
+}
+
+.pauseBtn {
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.pauseBtn.resume {
+  background: linear-gradient(135deg, var(--accent-green), #27ae60);
+  color: #fff;
+}
+
+.pauseBtn.restart {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: #fff;
+}
+
+.pauseBtn.quit {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.pauseBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
+/* ==========================================
+   RESULT SCREEN
+   ========================================== */
+
+.resultScreen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 30%, #1a1a3e 0%, #0f0f1a 70%);
+}
+
+.confettiContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confettiPiece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  animation: confettiFall linear forwards;
+}
+
+.resultContent {
+  text-align: center;
+  z-index: 1;
+  animation: scaleIn 0.8s ease-out;
+}
+
+.resultBanner {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.resultBanner.victory {
+  background: linear-gradient(135deg, var(--accent-gold), #e67e22);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.resultBanner.defeat {
+  background: linear-gradient(135deg, var(--accent-red), #c0392b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.resultSubtext {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.starsContainer {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.star {
+  font-size: 3rem;
+  opacity: 0;
+  filter: drop-shadow(0 0 8px rgba(243, 156, 18, 0.5));
+}
+
+.star.earned {
+  animation: starPop 0.5s ease-out forwards;
+}
+
+.star.unearned {
+  opacity: 0.2;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.resultStats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 2rem;
+  max-width: 360px;
+}
+
+.statCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.statCardLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.statCardValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent-cyan);
+}
+
+.resultButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.resultBtn {
+  padding: 14px 32px;
+  border-radius: var(--radius-full);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.resultBtn.primary {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  color: #fff;
+  box-shadow: var(--shadow-glow);
+}
+
+.resultBtn.secondary {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.resultBtn:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.15);
+}
+
+/* ==========================================
+   ELEMENTAL HIT ANIMATIONS
+   ========================================== */
+
+@keyframes burn-flash {
+  0% { filter: brightness(1) sepia(0) hue-rotate(0deg); transform: scale(1); }
+  20% { filter: brightness(2) sepia(1) hue-rotate(-50deg) saturate(5); transform: scale(1.1) translateY(-10px); }
+  40% { filter: brightness(1.5) sepia(1) hue-rotate(-50deg) saturate(3); transform: scale(1.05) translateX(10px); }
+  60% { filter: brightness(2) sepia(1) hue-rotate(-50deg) saturate(5); transform: scale(1.1) translateX(-10px); }
+  100% { filter: brightness(1) sepia(0) hue-rotate(0deg); transform: scale(1); }
+}
+
+@keyframes zap-shake {
+  0% { filter: brightness(1) drop-shadow(0 0 0px yellow); transform: translate(0, 0); }
+  10% { filter: brightness(3) drop-shadow(0 0 20px yellow); transform: translate(-15px, 15px) rotate(-5deg); }
+  20% { filter: brightness(1) drop-shadow(0 0 0px yellow); transform: translate(15px, -15px) rotate(5deg); }
+  30% { filter: brightness(3) drop-shadow(0 0 20px yellow); transform: translate(-10px, -10px) rotate(-3deg); }
+  40% { filter: brightness(1) drop-shadow(0 0 0px yellow); transform: translate(10px, 10px) rotate(3deg); }
+  100% { filter: brightness(1) drop-shadow(0 0 0px yellow); transform: translate(0, 0); }
+}
+
+@keyframes splash-wave {
+  0% { transform: scale(1) skewX(0deg); filter: hue-rotate(0deg); opacity: 1; }
+  25% { transform: scale(1.2) skewX(15deg); filter: hue-rotate(90deg) brightness(1.5); opacity: 0.8; }
+  50% { transform: scale(0.9) skewX(-15deg); filter: hue-rotate(180deg) brightness(1.5); opacity: 0.9; }
+  75% { transform: scale(1.1) skewX(5deg); filter: hue-rotate(90deg) brightness(1.2); opacity: 0.9; }
+  100% { transform: scale(1) skewX(0deg); filter: hue-rotate(0deg); opacity: 1; }
+}
+
+@keyframes stagger-miss {
+  0% { transform: translateX(0) grayscale(0); filter: blur(0px); }
+  20% { transform: translateX(-20px) grayscale(0.8); filter: blur(4px); }
+  40% { transform: translateX(10px) grayscale(1); filter: blur(2px); }
+  60% { transform: translateX(-5px) grayscale(1); filter: blur(1px); }
+  100% { transform: translateX(0) grayscale(0); filter: blur(0px); }
+}
+
+.burn-flash { animation: burn-flash 0.6s ease-out; }
+.zap-shake { animation: zap-shake 0.5s linear; }
+.splash-wave { animation: splash-wave 0.7s ease-in-out; }
+.stagger-miss { animation: stagger-miss 0.8s ease-out; }
+
+/* ==========================================
+   QTE TYPING OVERLAY
+   ========================================== */
+
+.qteOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.qteBox {
+  background: rgba(15, 15, 26, 0.95);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 2rem 3rem;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(74, 144, 226, 0.2);
+  min-width: 400px;
+  animation: scaleIn 0.3s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.qteBox.error {
+  animation: shake 0.3s ease-out;
+  border-color: var(--accent-red);
+  box-shadow: 0 0 30px rgba(231, 76, 60, 0.4);
+}
+
+.qteBox.success {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 30px rgba(46, 204, 113, 0.4);
+}
+
+.qteLabel {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.qteLabel.defense {
+  color: var(--accent-cyan);
+}
+
+.qtePrompt {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+  font-family: monospace;
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+
+.qteChar {
+  color: var(--text-dim);
+  transition: color 0.1s ease;
+}
+
+.qteChar.typed {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.qteChar.error {
+  color: var(--accent-red);
+  text-shadow: 0 0 10px rgba(231, 76, 60, 0.8);
+}
+
+.qteChar.current {
+  color: var(--text-secondary);
+  border-bottom: 3px solid var(--accent-blue);
+  animation: pulse 1s infinite alternate;
+}
+
+.qteTimerContainer {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 1rem;
+}
+
+.qteTimerFill {
+  height: 100%;
+  background: var(--accent-green);
+  width: 100%;
+  transition: width 0.1s linear, background-color 0.3s ease;
+}
+
+.qteTimerFill.warning {
+  background: var(--accent-gold);
+}
+
+.qteTimerFill.danger {
+  background: var(--accent-red);
+}
+
+/* Feedback floating text */
+.qteFeedback {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  pointer-events: none;
+  z-index: 60;
+  animation: starPop 0.8s ease-out forwards;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+
+
+/* ==========================================
+   SCREEN TRANSITION
+   ========================================== */
+
+.screenTransition {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .titleLogo {
+    font-size: 2.5rem;
+  }
+  .titleSubtitle {
+    font-size: 1rem;
+    letter-spacing: 2px;
+  }
+  .pokemonGrid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+  }
+  .cardSprite {
+    width: 65px;
+    height: 65px;
+  }
+  .cardName {
+    font-size: 0.8rem;
+  }
+  .battleSprite {
+    width: 100px;
+    height: 100px;
+  }
+  .pokemonInfoBox {
+    min-width: 170px;
+    padding: 8px 12px;
+  }
+  .pokemonNameBattle {
+    font-size: 0.85rem;
+  }
+  .movePanel {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 8px;
+  }
+  .moveBtn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+  .battleMessageBox {
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    min-height: 48px;
+  }
+  .resultBanner {
+    font-size: 2.2rem;
+  }
+  .star {
+    font-size: 2.2rem;
+  }
+  .resultStats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .resultButtons {
+    flex-direction: column;
+  }
+  .pauseTitle {
+    font-size: 2rem;
+  }
+  .enemyArea, .playerArea {
+    padding: 0 1rem;
+  }
+  .teamSelectTitle {
+    font-size: 1.6rem;
+  }
+  .qteBox {
+    min-width: 300px;
+    padding: 1.5rem;
+  }
+  .qtePrompt {
+    font-size: 2rem;
+  }
+  .qteFeedback {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pokemonGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .pokemonCard {
+    padding: 8px;
+  }
+  .cardSprite {
+    width: 50px;
+    height: 50px;
+  }
+  .typeBadge {
+    font-size: 0.55rem;
+    padding: 1px 5px;
+  }
+  .cardStats {
+    display: none;
+  }
+  .battleSprite {
+    width: 80px;
+    height: 80px;
+  }
+  .pokemonInfoBox {
+    min-width: 140px;
+    padding: 6px 10px;
   }
 }
