@@ -25,6 +25,7 @@ No randomness. No luck. Just pure keyboard skill!
 *   **1-PP Strategic Movesets:** Every Pokémon is loaded with 4 distinct elemental attacks. Each attack can only be used *once* per battle, forcing strategic rotation.
 *   **Elemental Visual FX:** Punchy CSS keyframe animations bring hits to life. Watch out for red burn-flashes, yellow zap-shakes, and splashing waves!
 *   **Synthesized Web Audio Engine:** Fully retro-inspired 8-bit sound effects (generated mathematically via the browser) for hits, success, and navigation.
+*   **Polished UI/UX:** Smooth transitions, confirmation dialogs for important actions, responsive design, and real-time visual feedback throughout the game.
 
 ---
 
