@@ -15,68 +15,88 @@ export const ADVANCED_WORDS = [
 
 
 /**
- * 10-Level progression system for typing mechanics.
+ * 10-Level progression system with PROGRESSIVE difficulty scaling
+ * 
+ * Time: Decreases as difficulty increases (more generous early, tighter later)
+ * Words: Difficulty increases gradually (short/easy -> long/complex)
+ * Enemies: Increases with level
+ * 
+ * Philosophy: Skill, not luck. Difficulty comes from:
+ * - Tighter time windows
+ * - Longer/harder words
+ * - More opponents
+ * - Multiple words to type simultaneously
  */
 export const LEVELS = [
   {
     level: 1,
     title: 'Beginner',
+    subtitle: 'Learn the Basics',
     enemyCount: 1,
-    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 5000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 6000 }
   },
   {
     level: 2,
-    title: 'Novice',
+    title: 'Novice', 
+    subtitle: 'Build Confidence',
     enemyCount: 1,
-    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 4000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 5500 }
   },
   {
     level: 3,
     title: 'Apprentice',
+    subtitle: 'Dual Challenge',
     enemyCount: 1,
     qteConfig: { type: 'words', wordCount: 2, bank: BEGINNER_WORDS, baseTimeMs: 5000 }
   },
   {
     level: 4,
     title: 'Challenger',
+    subtitle: 'First Rivals',
     enemyCount: 2,
-    qteConfig: { type: 'words', wordCount: 1, bank: MEDIUM_WORDS, baseTimeMs: 4000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: MEDIUM_WORDS, baseTimeMs: 4500 }
   },
   {
     level: 5,
     title: 'Veteran',
+    subtitle: 'Growing Stronger',
     enemyCount: 2,
-    qteConfig: { type: 'words', wordCount: 2, bank: MEDIUM_WORDS, baseTimeMs: 5000 }
+    qteConfig: { type: 'words', wordCount: 2, bank: MEDIUM_WORDS, baseTimeMs: 4000 }
   },
   {
     level: 6,
     title: 'Expert',
+    subtitle: 'Advanced Tactics',
     enemyCount: 2,
-    qteConfig: { type: 'words', wordCount: 1, bank: ADVANCED_WORDS, baseTimeMs: 4500 }
+    qteConfig: { type: 'words', wordCount: 1, bank: ADVANCED_WORDS, baseTimeMs: 3500 }
   },
   {
     level: 7,
     title: 'Master',
+    subtitle: 'Precision Required',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 2, bank: ADVANCED_WORDS, baseTimeMs: 5500 }
+    qteConfig: { type: 'words', wordCount: 2, bank: ADVANCED_WORDS, baseTimeMs: 3500 }
   },
   {
     level: 8,
     title: 'Grandmaster',
+    subtitle: 'Peak Performance',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 3, bank: MEDIUM_WORDS, baseTimeMs: 6000 }
+    qteConfig: { type: 'words', wordCount: 3, bank: MEDIUM_WORDS, baseTimeMs: 3000 }
   },
   {
     level: 9,
     title: 'Champion',
+    subtitle: 'Ultimate Challenge',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 2, bank: ADVANCED_WORDS, baseTimeMs: 4000 }
+    qteConfig: { type: 'words', wordCount: 2, bank: ADVANCED_WORDS, baseTimeMs: 3000 }
   },
   {
     level: 10,
     title: 'Legend',
+    subtitle: 'Conquer All',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 3, bank: ADVANCED_WORDS, baseTimeMs: 4500 }
+    qteConfig: { type: 'words', wordCount: 3, bank: ADVANCED_WORDS, baseTimeMs: 2500 }
   }
 ];
 

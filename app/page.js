@@ -95,14 +95,33 @@ function QteOverlay({ target, totalTime, isAttack, onComplete, sound }) {
   const timePct = (timeRemaining / totalTime) * 100;
   const timerClass = timePct > 50 ? '' : timePct > 20 ? 'warning' : 'danger';
   const boxClass = hasError ? 'error' : typed === target ? 'success' : '';
+  const progressPct = (typed.length / target.length) * 100;
 
   return (
     <div className="qteOverlay">
       <div className={`qteBox ${boxClass}`}>
-        <div className={`qteLabel ${isAttack ? '' : 'defense'}`}>
-          {isAttack ? 'Type to Attack!' : 'Type to Block!'}
+        {/* Header with mode indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+          <div className={`qteLabel ${isAttack ? '' : 'defense'}`} style={{ fontSize: '1.2rem', fontWeight: '800', letterSpacing: '1px' }}>
+            {isAttack ? '⚔️ TYPE TO ATTACK!' : '🛡️ TYPE TO DEFEND!'}
+          </div>
+          <div style={{ fontSize: '0.9rem', opacity: 0.8, fontWeight: '600' }}>
+            {typed.length} / {target.length}
+          </div>
         </div>
-        <div className="qtePrompt">
+        
+        {/* Progress bar */}
+        <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px', marginBottom: '1.5rem', overflow: 'hidden' }}>
+          <div style={{
+            height: '100%',
+            width: `${progressPct}%`,
+            background: `linear-gradient(90deg, ${isAttack ? '#e74c3c' : '#3498db'}, ${isAttack ? '#f39c12' : '#2ecc71'})`,
+            transition: 'width 0.1s ease-out'
+          }} />
+        </div>
+
+        {/* Typing prompt with enhanced styling */}
+        <div className="qtePrompt" style={{ marginBottom: '2rem' }}>
           {target.split('').map((char, i) => {
             const isTyped = i < typed.length;
             const isCurrent = i === typed.length;
@@ -112,18 +131,46 @@ function QteOverlay({ target, totalTime, isAttack, onComplete, sound }) {
             if (isCurrent && hasError) className += ' error';
             
             return (
-              <span key={i} className={className}>
+              <span key={i} className={className} style={{
+                fontSize: '1.8rem',
+                fontWeight: isCurrent ? '800' : isTyped ? '700' : '500',
+                color: isTyped ? '#51cf66' : isCurrent ? '#ffffff' : 'rgba(255, 255, 255, 0.5)',
+                transition: 'all 0.1s ease-out',
+                textShadow: isCurrent && !hasError ? '0 0 10px rgba(255, 255, 255, 0.5)' : 'none',
+                transform: isTyped ? 'scale(0.95) translateY(2px)' : 'scale(1)',
+                marginRight: char === ' ' ? '0.5rem' : '0.15rem'
+              }}>
                 {char === ' ' ? '⎵' : char}
               </span>
             );
           })}
         </div>
-        <div className="qteTimerContainer">
-          <div 
-            className={`qteTimerFill ${timerClass}`} 
-            style={{ width: `${timePct}%` }}
-          />
+
+        {/* Timer with enhanced visuals */}
+        <div style={{ marginBottom: '1rem' }}>
+          <div className={`qteTimerContainer`} style={{ height: '12px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '6px', overflow: 'hidden', position: 'relative' }}>
+            <div 
+              className={`qteTimerFill ${timerClass}`}
+              style={{
+                width: `${timePct}%`,
+                height: '100%',
+                background: timePct > 50 ? 'linear-gradient(90deg, #3498db, #2ecc71)' : timePct > 20 ? 'linear-gradient(90deg, #f39c12, #e67e22)' : 'linear-gradient(90deg, #e74c3c, #c0392b)',
+                transition: 'width 0.1s linear',
+                boxShadow: `0 0 10px ${timePct > 50 ? '#3498db' : timePct > 20 ? '#f39c12' : '#e74c3c'}80`
+              }}
+            />
+          </div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '0.5rem', textAlign: 'center', fontWeight: '600' }}>
+            {(timeRemaining / 1000).toFixed(2)}s remaining
+          </div>
         </div>
+
+        {/* Feedback indicator */}
+        {hasError && (
+          <div style={{ fontSize: '0.9rem', color: '#e74c3c', fontWeight: '700', textAlign: 'center', marginTop: '1rem', animation: 'pulse 0.3s' }}>
+            ✗ Wrong key! Keep typing...
+          </div>
+        )}
       </div>
     </div>
   );
@@ -238,36 +285,137 @@ function TeamSelectScreen({ onTeamSelected, sound }) {
 // ==========================================
 // LEVEL SELECT SCREEN
 // ==========================================
-function LevelSelectScreen({ onLevelSelected, sound }) {
+// LEVEL SELECT SCREEN
+// ==========================================
+function LevelSelectScreen({ onLevelSelected, sound, onBack }) {
   return (
     <div className="levelSelectScreen screenTransition">
-      <h2 className="teamSelectTitle">Choose Campaign Level</h2>
-      <p className="teamSelectSubtitle">Higher levels mean faster timers and harder words</p>
+      <div className="levelSelectHeader">
+        <h1 className="levelSelectTitle">🎮 Select Your Challenge</h1>
+        <p className="levelSelectSubtitle">Test your typing speed across 10 progressive levels</p>
+      </div>
       
-      <div className="levelGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', width: '90%', maxWidth: '1000px', margin: '2rem auto' }}>
-        {LEVELS.map((level, idx) => (
-          <button 
-            key={level.level} 
-            className="levelCard"
-            style={{ 
-              background: 'rgba(25, 25, 40, 0.8)', 
-              border: '2px solid var(--border)', 
-              borderRadius: 'var(--radius-lg)', 
-              padding: '1.5rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              textAlign: 'left'
-            }}
-            onClick={() => { sound.playSelect(); onLevelSelected(idx); }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'none'; }}
-          >
-            <div style={{ fontSize: '1.2rem', color: 'var(--accent-gold)', marginBottom: '0.5rem', fontWeight: 800 }}>Level {level.level}</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>{level.title}</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-dim)', marginBottom: '0.3rem' }}>Time: {level.qteConfig.baseTimeMs / 1000}s</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-dim)' }}>Format: {level.qteConfig.type.toUpperCase()}</div>
-          </button>
-        ))}
+      <div className="levelGrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', width: '95%', maxWidth: '1200px', margin: '2rem auto' }}>
+        {LEVELS.map((level, idx) => {
+          const difficulty = idx < 3 ? 'Easy' : idx < 6 ? 'Medium' : idx < 9 ? 'Hard' : 'Extreme';
+          const diffColor = idx < 3 ? '#2ecc71' : idx < 6 ? '#f39c12' : idx < 9 ? '#e74c3c' : '#c0392b';
+          
+          return (
+            <button 
+              key={level.level} 
+              className="levelCard"
+              style={{ 
+                background: 'linear-gradient(135deg, rgba(25, 25, 40, 0.95), rgba(50, 40, 80, 0.7))',
+                border: '2px solid var(--border)', 
+                borderRadius: '12px', 
+                padding: '1.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                textAlign: 'left',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onClick={() => { sound.playSelect(); onLevelSelected(idx); }}
+              onMouseEnter={(e) => { 
+                e.currentTarget.style.borderColor = 'var(--accent-cyan)'; 
+                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 206, 201, 0.2)';
+              }}
+              onMouseLeave={(e) => { 
+                e.currentTarget.style.borderColor = 'var(--border)'; 
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              {/* Background accent */}
+              <div style={{ position: 'absolute', top: 0, right: 0, width: '70px', height: '70px', background: diffColor, opacity: 0.1, borderRadius: '50%', pointerEvents: 'none' }} />
+              
+              {/* Content */}
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
+                  <div style={{ fontSize: '1.1rem', color: diffColor, fontWeight: 700, padding: '0.3rem 0.8rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px' }}>
+                    {difficulty}
+                  </div>
+                  <div style={{ fontSize: '2rem' }}>Lv.{level.level}</div>
+                </div>
+                
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--text-bright)' }}>
+                  {level.title}
+                </h3>
+                
+                {level.subtitle && (
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.2rem', fontStyle: 'italic' }}>
+                    {level.subtitle}
+                  </p>
+                )}
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.2rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.1rem' }}>⏱️</span>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Time Limit</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '600' }}>{level.qteConfig.baseTimeMs / 1000}s</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.1rem' }}>📝</span>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Words</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '600' }}>{level.qteConfig.wordCount} word{level.qteConfig.wordCount > 1 ? 's' : ''}</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.1rem' }}>👾</span>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Opponents</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '600' }}>{level.enemyCount}</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.1rem' }}>🎯</span>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Difficulty</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: '600' }}>
+                        {idx < 3 ? 'Warm-up' : idx < 6 ? 'Balanced' : idx < 9 ? 'Intense' : 'Peak'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Back button */}
+      <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+        <button 
+          onClick={() => { sound.playClick(); onBack && onBack(); }}
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid var(--border)',
+            color: 'var(--text-secondary)',
+            padding: '0.8rem 1.5rem',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            fontSize: '0.95rem',
+            fontWeight: '600'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--text-secondary)';
+            e.currentTarget.style.color = 'var(--text-bright)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border)';
+            e.currentTarget.style.color = 'var(--text-secondary)';
+          }}
+        >
+          ← Back to Team Select
+        </button>
       </div>
     </div>
   );
@@ -516,8 +664,8 @@ function BattleScreen({
       const enemyMove = getAIMove(activeEnemy, activePlayer);
       setMessage(`Opponent is using ${enemyMove.name}! Type to Defend!`);
       
-      // Slightly more generous time for defense
-      const defenseTime = levelConfig.qteConfig.baseTimeMs + 500;
+      // Defense gets slightly more time to be fair
+      const defenseTime = levelConfig.qteConfig.baseTimeMs * 1.1; // 10% bonus for defense reaction
       setQte({
         active: true,
         target: generateTypingPrompt(levelConfig),
@@ -556,7 +704,7 @@ function BattleScreen({
     setQte({
       active: true,
       target: generateTypingPrompt(levelConfig),
-      time: levelConfig.qteConfig.baseTimeMs + 1000,
+      time: levelConfig.qteConfig.baseTimeMs * 1.1,
       isAttack: false,
       move: enemyMove
     });
@@ -660,21 +808,78 @@ function BattleScreen({
 
       {actionMode === 'fight' ? (
         <div className="movePanel">
-          {activePlayer.moves.map((move) => (
-            <button
-              key={move.name}
-              className="moveBtn"
-              style={{ backgroundColor: move.currentPp > 0 ? getTypeColor(move.type) : '#333' }}
-              disabled={!isPlayerTurn || isAnimating || move.currentPp <= 0 || activePlayer.isFainted}
-              onClick={() => handlePlayerMoveInitiate(move)}
-            >
-              <span className="moveName">{TYPE_ICONS[move.type]} {move.name}</span>
-              <span className="moveMeta">
-                <span>{move.type.toUpperCase()}</span>
-                <span>PWR {move.power} {move.currentPp <= 0 && '(USED)'}</span>
-              </span>
-            </button>
-          ))}
+          {activePlayer.moves.map((move, moveIdx) => {
+            const isDisabled = !isPlayerTurn || isAnimating || move.currentPp <= 0 || activePlayer.isFainted;
+            const moveColor = move.currentPp > 0 ? getTypeColor(move.type) : '#2a2a3a';
+            const hasUsedMove = move.currentPp <= 0;
+            
+            return (
+              <button
+                key={move.name}
+                className={`moveBtn${isDisabled ? ' disabled' : ''}`}
+                style={{
+                  backgroundColor: moveColor,
+                  opacity: isDisabled ? 0.4 : 1,
+                  border: `3px solid ${move.currentPp > 0 ? moveColor : 'rgba(255,255,255,0.2)'}`,
+                  color: 'white',
+                  padding: '1rem',
+                  borderRadius: '10px',
+                  cursor: isDisabled ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  minHeight: '100px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: move.currentPp > 0 && !isDisabled ? `0 0 20px ${moveColor}80` : 'none'
+                }}
+                disabled={isDisabled}
+                onClick={() => !isDisabled && handlePlayerMoveInitiate(move)}
+                onMouseEnter={(e) => {
+                  if (!isDisabled) {
+                    e.currentTarget.style.transform = 'scale(1.05) translateY(-3px)';
+                    e.currentTarget.style.boxShadow = `0 8px 28px ${moveColor}A0, inset 0 0 20px ${moveColor}40`;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow = move.currentPp > 0 && !isDisabled ? `0 0 20px ${moveColor}80` : 'none';
+                }}
+              >
+                {/* Type background accent */}
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  width: '60px',
+                  height: '60px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '50%',
+                  pointerEvents: 'none'
+                }} />
+                
+                {/* Move info */}
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ fontSize: '1.3rem', fontWeight: '800', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span>{TYPE_ICONS[move.type]}</span>
+                    <span>{move.name}</span>
+                  </div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.9, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    {move.type.charAt(0).toUpperCase() + move.type.slice(1)}
+                  </div>
+                </div>
+                
+                {/* Stats row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', marginTop: '0.6rem', paddingTop: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.2)', position: 'relative', zIndex: 1 }}>
+                  <span style={{ fontWeight: '700' }}>⚡ {move.power}</span>
+                  <span style={{ fontWeight: '700', color: hasUsedMove ? '#ff6b6b' : '#51cf66' }}>
+                    {hasUsedMove ? '✗ USED' : '✓ READY'}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       ) : (
         <div className="switchPanel">
@@ -715,47 +920,231 @@ function BattleScreen({
 function ResultScreen({ result, onContinue, onReplayLevel, onRestart, sound }) {
   const isGameClear = result.won && result.levelIndex === LEVELS.length - 1;
   const isLevelClear = result.won && !isGameClear;
+  const levelConfig = LEVELS[result.levelIndex];
 
   useEffect(() => {
     if (result.won) sound.playVictory();
     else sound.playDefeat();
   }, [result.won, sound]);
 
+  const getPerformanceRating = () => {
+    const score = result.score || 0;
+    if (score >= 3000) return { stars: 3, label: 'Legendary', color: '#f39c12' };
+    if (score >= 1500) return { stars: 2, label: 'Excellent', color: '#e74c3c' };
+    return { stars: 1, label: 'Good', color: '#3498db' };
+  };
+
+  const performance = getPerformanceRating();
+
   return (
     <div className="resultScreen screenTransition">
-      <div className="resultContent">
-        <h1 className={`resultBanner ${result.won ? 'victory' : 'defeat'}`}>
-          {isGameClear ? 'Campaign Completed!' : isLevelClear ? 'Level Cleared!' : 'Game Over'}
-        </h1>
-        <p className="resultSubtext">
-          {isGameClear ? 'You are a Typing Legend!' 
-            : isLevelClear ? `Proceed to Level ${result.levelIndex + 2} now or replay for a better total score.` 
-            : 'Your team was defeated.'}
-        </p>
+      <div className="resultContent" style={{
+        maxWidth: '600px',
+        margin: '0 auto',
+        animation: 'slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)'
+      }}>
+        {/* Header Banner */}
+        <div style={{
+          marginBottom: '2rem',
+          textAlign: 'center',
+          animation: result.won ? 'bounce 0.6s 0.2s both' : 'shake 0.4s 0.2s both'
+        }}>
+          <h1 className={`resultBanner ${result.won ? 'victory' : 'defeat'}`} style={{
+            fontSize: '3rem',
+            fontWeight: '900',
+            marginBottom: '0.5rem',
+            background: result.won ? 'linear-gradient(135deg, #2ecc71, #f39c12)' : 'linear-gradient(135deg, #e74c3c, #c0392b)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>
+            {isGameClear ? '👑 CAMPAIGN COMPLETE!' : isLevelClear ? '⭐ VICTORY!' : '❌ DEFEATED'}
+          </h1>
+          <p className="resultSubtext" style={{
+            fontSize: '1.2rem',
+            marginBottom: '0',
+            color: result.won ? '#2ecc71' : '#e74c3c',
+            fontWeight: '600'
+          }}>
+            {isGameClear ? '🔥 You are a Typing Legend! 🔥' 
+              : isLevelClear ? `💪 Well done! Ready for Level ${result.levelIndex + 2}?` 
+              : '🎮 Better luck next time!'}
+          </p>
+        </div>
 
-        <div className="resultStats">
-          <div className="statCard">
-            <div className="statCardLabel">Total Score</div>
-            <div className="statCardValue">{result.score || 0}</div>
+        {/* Stats Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.02))',
+            border: '2px solid rgba(255, 193, 7, 0.3)',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>
+              Final Score
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#f39c12' }}>
+              {result.score || 0}
+            </div>
           </div>
-          <div className="statCard">
-            <div className="statCardLabel">Max Level</div>
-            <div className="statCardValue">{result.levelIndex + 1}</div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.02))',
+            border: '2px solid rgba(52, 152, 219, 0.3)',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>
+              Level Reached
+            </div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '900', color: '#3498db' }}>
+              {result.levelIndex + 1} / 10
+            </div>
           </div>
         </div>
 
-        <div className="resultButtons" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {/* Performance Rating */}
+        {result.won && (
+          <div style={{
+            background: `rgba(${performance.color.slice(1).match(/.{1,2}/g).join(',')}, 0.15)`,
+            border: `2px solid ${performance.color}`,
+            borderRadius: '12px',
+            padding: '1.5rem',
+            textAlign: 'center',
+            marginBottom: '2rem'
+          }}>
+            <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
+              {Array(performance.stars).fill('⭐').join('')}
+            </div>
+            <div style={{ fontSize: '1.2rem', fontWeight: '700', color: performance.color, marginBottom: '0.3rem' }}>
+              {performance.label} Performance
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              {performance.stars === 3 ? 'Outstanding! You are a true typing master!' : 
+               performance.stars === 2 ? 'Excellent work! Keep pushing your limits!' : 
+               'Good effort! Practice makes perfect!'}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Primary action button */}
           {isLevelClear && (
-             <button className="resultBtn primary" onClick={() => { sound.playSelect(); onContinue(); }}>Continue Campaign</button>
+            <button 
+              onClick={() => { sound.playSelect(); onContinue(); }}
+              style={{
+                background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
+                border: 'none',
+                color: 'white',
+                padding: '1.2rem 2rem',
+                borderRadius: '8px',
+                fontSize: '1.1rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                boxShadow: '0 8px 16px rgba(46, 204, 113, 0.3)',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 12px 24px rgba(46, 204, 113, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = '0 8px 16px rgba(46, 204, 113, 0.3)';
+              }}
+            >
+              ➜ Continue to Level {result.levelIndex + 2}
+            </button>
           )}
-          
-          <button className="resultBtn secondary" style={{ borderColor: 'var(--accent-gold)', color: 'var(--accent-gold)' }} onClick={() => { sound.playSelect(); onReplayLevel(); }}>
-            Replay Level
+
+          {/* Replay button */}
+          <button 
+            onClick={() => { sound.playSelect(); onReplayLevel(); }}
+            style={{
+              background: 'rgba(243, 156, 18, 0.15)',
+              border: '2px solid #f39c12',
+              color: '#f39c12',
+              padding: '1rem 2rem',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '700',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(243, 156, 18, 0.25)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(243, 156, 18, 0.15)';
+              e.currentTarget.style.transform = 'none';
+            }}
+          >
+            🔄 Replay Level {result.levelIndex + 1}
           </button>
-          
-          <button className="resultBtn secondary" onClick={() => { sound.playSelect(); onRestart(false); }}>New Campaign</button>
-          
-          <button className="resultBtn secondary" style={{ opacity: 0.7 }} onClick={() => { sound.playClick(); onRestart(true); }}>Exit to Menu</button>
+
+          {/* New Campaign button */}
+          <button 
+            onClick={() => { sound.playSelect(); onRestart(false); }}
+            style={{
+              background: 'rgba(52, 152, 219, 0.15)',
+              border: '2px solid #3498db',
+              color: '#3498db',
+              padding: '1rem 2rem',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '700',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              textTransform: 'uppercase',
+              letterSpacing: '1px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(52, 152, 219, 0.25)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(52, 152, 219, 0.15)';
+              e.currentTarget.style.transform = 'none';
+            }}
+          >
+            🎮 New Campaign
+          </button>
+
+          {/* Exit to menu button */}
+          <button 
+            onClick={() => { sound.playClick(); onRestart(true); }}
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '2px solid rgba(255, 255, 255, 0.2)',
+              color: 'var(--text-secondary)',
+              padding: '0.8rem 2rem',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--text-secondary)';
+              e.currentTarget.style.color = 'var(--text-bright)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.color = 'var(--text-secondary)';
+            }}
+          >
+            ✕ Return to Menu
+          </button>
         </div>
       </div>
     </div>
@@ -795,6 +1184,10 @@ export default function PokemonGame() {
     
     setBattleResult(result);
     setScreen('result');
+  };
+
+  const handleLevelSelectBack = () => {
+    setScreen('teamSelect');
   };
 
   const handleContinue = () => {
@@ -842,7 +1235,7 @@ export default function PokemonGame() {
       
       {screen === 'teamSelect' && <TeamSelectScreen onTeamSelected={handleTeamSelected} sound={sound} />}
       
-      {screen === 'levelSelect' && <LevelSelectScreen onLevelSelected={handleLevelSelected} sound={sound} />}
+      {screen === 'levelSelect' && <LevelSelectScreen onLevelSelected={handleLevelSelected} onBack={handleLevelSelectBack} sound={sound} />}
       
       {screen === 'battle' && (
         <BattleScreen
