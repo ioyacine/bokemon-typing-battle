@@ -113,6 +113,71 @@ export function evaluateTypingPerformance(typedLength, targetLength, isAttack) {
 }
 
 /**
+ * Calculate competitive typing race result
+ * NEW SYSTEM: Both players race to type the same word
+ * Winner = whoever types it correctly first
+ * Damage = based on speed advantage
+ */
+export function calculateCompetitiveRaceResult(
+  playerTypedLength,
+  playerTargetLength,
+  playerTimeMs,
+  aiTimeMs,
+  attacker,
+  defender,
+  move
+) {
+  const level = 50;
+  const baseDamage = ((2 * level / 5 + 2) * move.power * (attacker.attack / defender.defense)) / 50 + 2;
+  const effectiveness = getEffectiveness(move.type, defender.types);
+  const stab = attacker.types.includes(move.type) ? 1.5 : 1;
+
+  // Calculate results
+  const playerAccuracy = playerTargetLength > 0 ? playerTypedLength / playerTargetLength : 0;
+  const playerFinished = playerTypedLength === playerTargetLength;
+  
+  let winner = null;
+  let damage = 0;
+  let powerMultiplier = 0;
+  let label = '';
+  let color = '';
+
+  // Race logic: who finished first?
+  if (playerFinished && playerTimeMs < aiTimeMs) {
+    // Player won the race
+    winner = 'player';
+    // Speed advantage multiplier (0.5x to 1.5x based on how much faster)
+    const speedRatio = aiTimeMs / Math.max(1, playerTimeMs);
+    powerMultiplier = Math.min(1.5, speedRatio * playerAccuracy);
+    damage = Math.floor(baseDamage * effectiveness * stab * powerMultiplier);
+    label = speedRatio > 1.5 ? '🔥 CRUSHING SPEED!' : '⚡ DECISIVE WIN!';
+    color = '#2ecc71';
+  } else if (!playerFinished) {
+    // Player didn't finish
+    damage = 0;
+    label = '❌ TIME\'S UP!';
+    color = '#e74c3c';
+  } else {
+    // AI finished first (for defender calculation)
+    winner = 'ai';
+    damage = Math.floor(baseDamage * effectiveness * stab * 0.8);
+    label = '🛡️ NARROWLY BLOCKED!';
+    color = '#f39c12';
+  }
+
+  return {
+    winner,
+    damage,
+    powerMultiplier,
+    label,
+    color,
+    playerTime: playerTimeMs,
+    aiTime: aiTimeMs,
+    playerAccuracy
+  };
+}
+
+/**
  * Get star rating based on score
  */
 export function getStarRating(score) {

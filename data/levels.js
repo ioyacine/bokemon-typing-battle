@@ -17,86 +17,85 @@ export const ADVANCED_WORDS = [
 /**
  * 10-Level progression system with PROGRESSIVE difficulty scaling
  * 
- * Time: Decreases as difficulty increases (more generous early, tighter later)
- * Words: Difficulty increases gradually (short/easy -> long/complex)
- * Enemies: Increases with level
+ * NEW COMPETITIVE SYSTEM:
+ * - Real-time racing between player and AI
+ * - Shorter, faster-paced word races
+ * - 8-strike system: lose 8 exchanges to lose the level
+ * - Speed + Accuracy both matter
  * 
- * Philosophy: Skill, not luck. Difficulty comes from:
- * - Tighter time windows
- * - Longer/harder words
- * - More opponents
- * - Multiple words to type simultaneously
+ * Time: How long the AI takes to complete (difficulty metric)
+ * Words: Single words per exchange (no multi-word complexity)
  */
 export const LEVELS = [
   {
     level: 1,
     title: 'Beginner',
-    subtitle: 'Learn the Basics',
+    subtitle: 'Learn the Pace',
     enemyCount: 1,
-    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 6000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 5000, aiDelay: 3500 }
   },
   {
     level: 2,
     title: 'Novice', 
-    subtitle: 'Build Confidence',
+    subtitle: 'Build Speed',
     enemyCount: 1,
-    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 5500 }
+    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 4500, aiDelay: 3200 }
   },
   {
     level: 3,
     title: 'Apprentice',
-    subtitle: 'Dual Challenge',
+    subtitle: 'Quick Reflexes',
     enemyCount: 1,
-    qteConfig: { type: 'words', wordCount: 2, bank: BEGINNER_WORDS, baseTimeMs: 5000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: BEGINNER_WORDS, baseTimeMs: 4000, aiDelay: 2800 }
   },
   {
     level: 4,
     title: 'Challenger',
-    subtitle: 'First Rivals',
+    subtitle: 'Intense Racing',
     enemyCount: 2,
-    qteConfig: { type: 'words', wordCount: 1, bank: MEDIUM_WORDS, baseTimeMs: 4500 }
+    qteConfig: { type: 'words', wordCount: 1, bank: MEDIUM_WORDS, baseTimeMs: 3500, aiDelay: 2500 }
   },
   {
     level: 5,
     title: 'Veteran',
-    subtitle: 'Growing Stronger',
+    subtitle: 'Faster Competition',
     enemyCount: 2,
-    qteConfig: { type: 'words', wordCount: 2, bank: MEDIUM_WORDS, baseTimeMs: 4000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: MEDIUM_WORDS, baseTimeMs: 3000, aiDelay: 2000 }
   },
   {
     level: 6,
     title: 'Expert',
-    subtitle: 'Advanced Tactics',
+    subtitle: 'Expert Pace',
     enemyCount: 2,
-    qteConfig: { type: 'words', wordCount: 1, bank: ADVANCED_WORDS, baseTimeMs: 3500 }
+    qteConfig: { type: 'words', wordCount: 1, bank: ADVANCED_WORDS, baseTimeMs: 2500, aiDelay: 1800 }
   },
   {
     level: 7,
     title: 'Master',
-    subtitle: 'Precision Required',
+    subtitle: 'Lightning Speed',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 2, bank: ADVANCED_WORDS, baseTimeMs: 3500 }
+    qteConfig: { type: 'words', wordCount: 1, bank: ADVANCED_WORDS, baseTimeMs: 2200, aiDelay: 1500 }
   },
   {
     level: 8,
     title: 'Grandmaster',
-    subtitle: 'Peak Performance',
+    subtitle: 'Extreme Speed',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 3, bank: MEDIUM_WORDS, baseTimeMs: 3000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: MEDIUM_WORDS, baseTimeMs: 2000, aiDelay: 1200 }
   },
   {
     level: 9,
     title: 'Champion',
-    subtitle: 'Ultimate Challenge',
+    subtitle: 'Elite Competition',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 2, bank: ADVANCED_WORDS, baseTimeMs: 3000 }
+    qteConfig: { type: 'words', wordCount: 1, bank: ADVANCED_WORDS, baseTimeMs: 1800, aiDelay: 1000 }
   },
   {
     level: 10,
     title: 'Legend',
-    subtitle: 'Conquer All',
+    subtitle: 'Peak Performance',
     enemyCount: 3,
-    qteConfig: { type: 'words', wordCount: 3, bank: ADVANCED_WORDS, baseTimeMs: 2500 }
+    qteConfig: { type: 'words', wordCount: 1, bank: ADVANCED_WORDS, baseTimeMs: 1500, aiDelay: 800 }
   }
 ];
 

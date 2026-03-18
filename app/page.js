@@ -23,6 +23,34 @@ const TYPE_ICONS = {
   dark: '🌑', steel: '⚙️', fairy: '✨', normal: '⭐'
 };
 
+// ==========================================
+// CONFIRMATION DIALOG COMPONENT
+// ==========================================
+function ConfirmationDialog({ title, message, onConfirm, onCancel, confirmText = 'Confirm', cancelText = 'Cancel', isDangerous = false }) {
+  return (
+    <div className="confirmationOverlay" style={{ zIndex: 300 }}>
+      <div className="confirmationDialog">
+        <h2 className="confirmationTitle">{title}</h2>
+        <p className="confirmationMessage">{message}</p>
+        <div className="confirmationButtons">
+          <button 
+            className="confirmationBtn cancel" 
+            onClick={onCancel}
+          >
+            {cancelText}
+          </button>
+          <button 
+            className={`confirmationBtn confirm ${isDangerous ? 'dangerous' : ''}`}
+            onClick={onConfirm}
+          >
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const getTypeAnimArgs = (type) => {
   switch (type) {
     case 'fire': return 'burn-flash';
@@ -34,7 +62,203 @@ const getTypeAnimArgs = (type) => {
 };
 
 // ==========================================
-// QTE TYPING OVERLAY
+// COMPETITIVE TYPING RACE OVERLAY
+// ==========================================
+function CompetitiveRaceOverlay({ target, totalTime, onComplete, sound, aiSimulatedTyping }) {
+  const [playerTyped, setPlayerTyped] = useState('');
+  const [timeRemaining, setTimeRemaining] = useState(totalTime);
+  const [hasError, setHasError] = useState(false);
+  const [playerFinished, setPlayerFinished] = useState(false);
+  const timerRef = useRef(null);
+  const startTimeRef = useRef(Date.now());
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (playerFinished) return;
+      if (e.ctrlKey || e.altKey || e.metaKey || e.key.length > 1) return;
+      if (e.key === ' ') e.preventDefault();
+
+      const nextChar = target[playerTyped.length];
+      if (e.key === nextChar) {
+        sound.playTypeKey();
+        const newTyped = playerTyped + e.key;
+        setPlayerTyped(newTyped);
+        setHasError(false);
+
+        if (newTyped.length === target.length) {
+          // Player finished!
+          setPlayerFinished(true);
+          const elapsedTime = Date.now() - startTimeRef.current;
+          sound.playTypeSuccess();
+          setTimeout(() => {
+            onComplete(newTyped.length, target.length, elapsedTime);
+          }, 500);
+        }
+      } else {
+        sound.playTypeError();
+        setHasError(true);
+        setTimeout(() => setHasError(false), 200);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [playerTyped, target, onComplete, sound, playerFinished]);
+
+  useEffect(() => {
+    const startTime = Date.now();
+    timerRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, totalTime - elapsed);
+      setTimeRemaining(remaining);
+      
+      if (remaining <= 0 && !playerFinished) {
+        clearInterval(timerRef.current);
+        sound.playTypeMiss();
+        onComplete(playerTyped.length, target.length, totalTime);
+      }
+    }, 16);
+
+    return () => clearInterval(timerRef.current);
+  }, [totalTime, onComplete, sound, playerTyped.length, playerFinished]);
+
+  const timePct = (timeRemaining / totalTime) * 100;
+  const progressPct = (playerTyped.length / target.length) * 100;
+
+  return (
+    <div className="qteOverlay">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', maxWidth: '900px', margin: '0 auto', alignItems: 'center' }}>
+        {/* Player Side */}
+        <div style={{
+          background: 'rgba(46, 204, 113, 0.1)',
+          border: '3px solid #2ecc71',
+          borderRadius: '12px',
+          padding: '2rem',
+          textAlign: 'center',
+          boxShadow: playerFinished ? '0 0 30px rgba(46, 204, 113, 0.5)' : 'none'
+        }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: '800', marginBottom: '1rem', color: '#2ecc71' }}>
+            👤 YOU
+          </div>
+          <div style={{
+            fontSize: '1.4rem',
+            fontWeight: '700',
+            marginBottom: '1.5rem',
+            minHeight: '40px',
+            color: playerFinished ? '#51cf66' : 'white'
+          }}>
+            {playerTyped.length} / {target.length}
+            {playerFinished && ' ✓'}
+          </div>
+          <div style={{
+            fontSize: '2rem',
+            fontWeight: '800',
+            fontFamily: 'monospace',
+            marginBottom: '1.5rem',
+            letterSpacing: '6px',
+            color: hasError ? '#ff6b6b' : playerFinished ? '#51cf66' : '#ffffff'
+          }}>
+            {playerTyped}
+            {playerTyped.length < target.length && (
+              <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '1.8rem' }}>
+                {target[playerTyped.length]}
+              </span>
+            )}
+          </div>
+          <div style={{
+            height: '6px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '3px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${progressPct}%`,
+              height: '100%',
+              background: '#51cf66',
+              transition: 'width 0.05s ease-out'
+            }} />
+          </div>
+        </div>
+
+        {/* AI Side */}
+        <div style={{
+          background: 'rgba(231, 76, 60, 0.1)',
+          border: '3px solid #e74c3c',
+          borderRadius: '12px',
+          padding: '2rem',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: '800', marginBottom: '1rem', color: '#e74c3c' }}>
+            👾 OPPONENT
+          </div>
+          <div style={{
+            fontSize: '1.4rem',
+            fontWeight: '700',
+            marginBottom: '1.5rem',
+            minHeight: '40px',
+            color: aiSimulatedTyping.finished ? '#ff8787' : 'white'
+          }}>
+            {aiSimulatedTyping.progress} / {target.length}
+            {aiSimulatedTyping.finished && ' ✓'}
+          </div>
+          <div style={{
+            fontSize: '2rem',
+            fontWeight: '800',
+            fontFamily: 'monospace',
+            marginBottom: '1.5rem',
+            letterSpacing: '6px',
+            color: aiSimulatedTyping.finished ? '#ff8787' : 'rgba(255,255,255,0.6)',
+            opacity: 0.7
+          }}>
+            {target.substring(0, aiSimulatedTyping.progress)}
+            {aiSimulatedTyping.progress < target.length && (
+              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '1.8rem' }}>
+                {target[aiSimulatedTyping.progress]}
+              </span>
+            )}
+          </div>
+          <div style={{
+            height: '6px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '3px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${(aiSimulatedTyping.progress / target.length) * 100}%`,
+              height: '100%',
+              background: '#ef5350',
+              transition: 'width 0.1s ease-out'
+            }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Timer at bottom */}
+      <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+        <div style={{
+          height: '8px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '4px',
+          overflow: 'hidden',
+          marginBottom: '1rem'
+        }}>
+          <div style={{
+            width: `${timePct}%`,
+            height: '100%',
+            background: timePct > 50 ? '#3498db' : timePct > 20 ? '#f39c12' : '#e74c3c',
+            transition: 'width 0.05s linear'
+          }} />
+        </div>
+        <div style={{ fontSize: '1.2rem', fontWeight: '700', color: timePct > 20 ? '#ffffff' : '#e74c3c' }}>
+          ⏱️ {(timeRemaining / 1000).toFixed(2)}s
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// OLD QTE TYPING OVERLAY (kept for compatibility)
 // ==========================================
 function QteOverlay({ target, totalTime, isAttack, onComplete, sound }) {
   const [typed, setTyped] = useState('');
@@ -449,6 +673,7 @@ function BattleScreen({
   const [message, setMessage] = useState(`Level ${levelConfig.level}: ${levelConfig.title}! What will you do?`);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
+  const [showQuitConfirmation, setShowQuitConfirmation] = useState(false);
   const [actionMode, setActionMode] = useState('fight');
   const [timer, setTimer] = useState(0);
   const [score, setScore] = useState(0);
@@ -906,9 +1131,21 @@ function BattleScreen({
           <h2 className="pauseTitle">Paused</h2>
           <div className="pauseButtons">
             <button className="pauseBtn resume" onClick={() => { setIsPaused(false); sound.playClick(); }}>▶ Resume</button>
-            <button className="pauseBtn quit" onClick={() => { sound.playClick(); onBattleEnd(null); }}>✕ Quit to Menu</button>
+            <button className="pauseBtn quit" onClick={() => { sound.playClick(); setShowQuitConfirmation(true); }}>✕ Quit to Menu</button>
           </div>
         </div>
+      )}
+
+      {showQuitConfirmation && (
+        <ConfirmationDialog
+          title="Quit Battle?"
+          message="You will lose all progress in this level. Are you sure?"
+          onConfirm={() => { sound.playClick(); setShowQuitConfirmation(false); onBattleEnd(null); }}
+          onCancel={() => { sound.playClick(); setShowQuitConfirmation(false); }}
+          confirmText="Quit"
+          cancelText="Cancel"
+          isDangerous={true}
+        />
       )}
     </div>
   );
