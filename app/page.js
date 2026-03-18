@@ -135,7 +135,8 @@ function CompetitiveRaceOverlay({ target, totalTime, onComplete, sound, aiSimula
           borderRadius: '12px',
           padding: '2rem',
           textAlign: 'center',
-          boxShadow: playerFinished ? '0 0 30px rgba(46, 204, 113, 0.5)' : 'none'
+          boxShadow: playerFinished ? '0 0 30px rgba(46, 204, 113, 0.5)' : 'none',
+          animation: playerFinished ? 'victoryBump 0.6s ease-out' : 'none'
         }}>
           <div style={{ fontSize: '1.2rem', fontWeight: '800', marginBottom: '1rem', color: '#2ecc71' }}>
             👤 YOU
@@ -145,7 +146,8 @@ function CompetitiveRaceOverlay({ target, totalTime, onComplete, sound, aiSimula
             fontWeight: '700',
             marginBottom: '1.5rem',
             minHeight: '40px',
-            color: playerFinished ? '#51cf66' : 'white'
+            color: playerFinished ? '#51cf66' : 'white',
+            animation: playerFinished ? 'pulse 0.6s ease-out' : 'none'
           }}>
             {playerTyped.length} / {target.length}
             {playerFinished && ' ✓'}
@@ -156,7 +158,9 @@ function CompetitiveRaceOverlay({ target, totalTime, onComplete, sound, aiSimula
             fontFamily: 'monospace',
             marginBottom: '1.5rem',
             letterSpacing: '6px',
-            color: hasError ? '#ff6b6b' : playerFinished ? '#51cf66' : '#ffffff'
+            color: hasError ? '#ff6b6b' : playerFinished ? '#51cf66' : '#ffffff',
+            animation: hasError ? 'typingErrorShake 0.4s ease-out' : '',
+            transition: 'color 0.2s ease-out'
           }}>
             {playerTyped}
             {playerTyped.length < target.length && (
@@ -174,8 +178,9 @@ function CompetitiveRaceOverlay({ target, totalTime, onComplete, sound, aiSimula
             <div style={{
               width: `${progressPct}%`,
               height: '100%',
-              background: '#51cf66',
-              transition: 'width 0.05s ease-out'
+              background: playerFinished ? 'linear-gradient(90deg, #51cf66, #2ecc71)' : '#51cf66',
+              transition: 'width 0.05s ease-out, background 0.3s ease-out',
+              boxShadow: playerFinished ? '0 0 10px #51cf66' : 'none'
             }} />
           </div>
         </div>
@@ -196,7 +201,8 @@ function CompetitiveRaceOverlay({ target, totalTime, onComplete, sound, aiSimula
             fontWeight: '700',
             marginBottom: '1.5rem',
             minHeight: '40px',
-            color: aiSimulatedTyping.finished ? '#ff8787' : 'white'
+            color: aiSimulatedTyping.finished ? '#ff8787' : 'white',
+            animation: aiSimulatedTyping.finished ? 'victoryBump 0.6s ease-out' : 'none'
           }}>
             {aiSimulatedTyping.progress} / {target.length}
             {aiSimulatedTyping.finished && ' ✓'}
@@ -537,13 +543,14 @@ function LevelSelectScreen({ onLevelSelected, sound, onBack }) {
                 transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 textAlign: 'left',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                animation: `slideInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ${idx * 0.08}s both`
               }}
               onClick={() => { sound.playSelect(); onLevelSelected(idx); }}
               onMouseEnter={(e) => { 
                 e.currentTarget.style.borderColor = 'var(--accent-cyan)'; 
-                e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
-                e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 206, 201, 0.2)';
+                e.currentTarget.style.transform = 'translateY(-6px) scale(1.03)';
+                e.currentTarget.style.boxShadow = '0 12px 36px rgba(0, 206, 201, 0.3)';
               }}
               onMouseLeave={(e) => { 
                 e.currentTarget.style.borderColor = 'var(--border)'; 
@@ -574,7 +581,7 @@ function LevelSelectScreen({ onLevelSelected, sound, onBack }) {
                 )}
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.2rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', animation: `fadeInUp 0.5s ease-out ${0.1 + idx * 0.08}s both` }}>
                     <span style={{ fontSize: '1.1rem' }}>⏱️</span>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Time Limit</div>
@@ -582,7 +589,7 @@ function LevelSelectScreen({ onLevelSelected, sound, onBack }) {
                     </div>
                   </div>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', animation: `fadeInUp 0.5s ease-out ${0.15 + idx * 0.08}s both` }}>
                     <span style={{ fontSize: '1.1rem' }}>📝</span>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Words</div>
@@ -590,7 +597,7 @@ function LevelSelectScreen({ onLevelSelected, sound, onBack }) {
                     </div>
                   </div>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', animation: `fadeInUp 0.5s ease-out ${0.2 + idx * 0.08}s both` }}>
                     <span style={{ fontSize: '1.1rem' }}>👾</span>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Opponents</div>
@@ -598,7 +605,7 @@ function LevelSelectScreen({ onLevelSelected, sound, onBack }) {
                     </div>
                   </div>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', animation: `fadeInUp 0.5s ease-out ${0.25 + idx * 0.08}s both` }}>
                     <span style={{ fontSize: '1.1rem' }}>🎯</span>
                     <div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Difficulty</div>
@@ -802,9 +809,17 @@ function BattleScreen({
       const animClass = getTypeAnimArgs(move.type);
       if (isPlayer) {
         setEnemySpriteClass(animClass);
+        // Add flinch animation on hit
+        setTimeout(() => {
+          setEnemySpriteClass('pokemonFlinch');
+        }, 150);
         sound.playHit();
       } else {
         setPlayerSpriteClass(animClass);
+        // Add flinch animation on hit
+        setTimeout(() => {
+          setPlayerSpriteClass('pokemonFlinch');
+        }, 150);
         sound.playHit();
       }
 
@@ -1158,10 +1173,24 @@ function ResultScreen({ result, onContinue, onReplayLevel, onRestart, sound }) {
   const isGameClear = result.won && result.levelIndex === LEVELS.length - 1;
   const isLevelClear = result.won && !isGameClear;
   const levelConfig = LEVELS[result.levelIndex];
+  const [confetti, setConfetti] = useState([]);
 
   useEffect(() => {
-    if (result.won) sound.playVictory();
-    else sound.playDefeat();
+    if (result.won) {
+      sound.playVictory();
+      
+      // Create confetti particles for victory
+      const particles = Array.from({ length: 30 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 0.2,
+        duration: 2 + Math.random() * 1,
+        char: ['🎉', '⭐', '✨', '💫', '🌟'][Math.floor(Math.random() * 5)]
+      }));
+      setConfetti(particles);
+    } else {
+      sound.playDefeat();
+    }
   }, [result.won, sound]);
 
   const getPerformanceRating = () => {
@@ -1175,6 +1204,22 @@ function ResultScreen({ result, onContinue, onReplayLevel, onRestart, sound }) {
 
   return (
     <div className="resultScreen screenTransition">
+      {/* Victory Confetti */}
+      {result.won && confetti.map(particle => (
+        <div
+          key={particle.id}
+          className="confetti"
+          style={{
+            left: `${particle.left}%`,
+            fontSize: '2rem',
+            animationDelay: `${particle.delay}s`,
+            animationDuration: `${particle.duration}s`
+          }}
+        >
+          {particle.char}
+        </div>
+      ))}
+
       <div className="resultContent" style={{
         maxWidth: '600px',
         margin: '0 auto',
@@ -1216,7 +1261,8 @@ function ResultScreen({ result, onContinue, onReplayLevel, onRestart, sound }) {
             border: '2px solid rgba(255, 193, 7, 0.3)',
             borderRadius: '12px',
             padding: '1.5rem',
-            textAlign: 'center'
+            textAlign: 'center',
+            animation: result.won ? 'scaleIn 0.5s 0.3s both' : 'slideInUp 0.5s 0.3s both'
           }}>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginBottom: '0.5rem', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>
               Final Score
